@@ -33,10 +33,12 @@ public class ChessPiece : MonoBehaviour
         transform.localScale = Vector3.Lerp(transform.localScale, desiredScale, Time.deltaTime * 10);
     }
 
-    public List<Vector2Int> GetAvailableMoves(ref ChessPiece[,] board, int tileCountX, int tileCountY)
+    //Needs to be virtual to be overriden 
+    public virtual List<Vector2Int> GetAvailableMoves(ref ChessPiece[,] board, int tileCountX, int tileCountY)
     {
         List<Vector2Int> r = new List<Vector2Int>();
 
+        //Highlighting the middle pieces for testing purposes.  
         r.Add(new Vector2Int(3, 3));
         r.Add(new Vector2Int(3, 4));
         r.Add(new Vector2Int(4, 3));
