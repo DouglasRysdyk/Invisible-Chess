@@ -5,7 +5,10 @@ using UnityEngine;
 public class NOTES : MonoBehaviour {}
 /*
 TODO: 
-- Exact bookmark -- https://youtu.be/lOEl1iNR3dc?t=1382 
+- Exact bookmark -- https://youtu.be/lOEl1iNR3dc?t=1777 
+- I dunno if the tutorial will go over Promoting
+- There is some sort of out of bounds error involving the pawns that I haven't run into yet, but makes sense and others say it exists.  
+- Are the Queen and King in the correct positions?  
 */
 
 /*
