@@ -2,6 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum SpecialMove 
+{
+    None = 0,
+    EnPassant, 
+    Castling,
+    Promotion
+}
+
 public class Chessboard : MonoBehaviour
 {
     [Header("Art")]
@@ -31,6 +39,8 @@ public class Chessboard : MonoBehaviour
     private Vector2Int currentHover; 
     private Vector3 bounds; 
     private bool isWhiteTurn;
+    private SpecialMove specialMove; 
+    private List<Vector2Int[]> moveList = new List<Vector2Int[]>();
 
     private void Awake()
     {
@@ -85,6 +95,10 @@ public class Chessboard : MonoBehaviour
 
                         //Get list of where I can go and highlight the tiles. 
                         availableMoves = currentlyDragging.GetAvailableMoves(ref chessPieces, TILE_COUNT_X, TILE_COUNT_Y);
+
+                        //Get a list of special moves as well 
+                        specialMove = currentlyDragging.GetSpecialMoves(ref chessPieces, ref moveList, ref availableMoves);
+
                         HighlightTiles();
                     }
                 }
@@ -260,10 +274,7 @@ public class Chessboard : MonoBehaviour
     }
 
     //Checkmate 
-    private void CheckMate(int team)
-    {
-        DisplayVictory(team);
-    }
+    private void CheckMate(int team) => DisplayVictory(team);
     private void DisplayVictory(int winningTeam)
     {
         victoryScreen.SetActive(true);
@@ -278,7 +289,8 @@ public class Chessboard : MonoBehaviour
 
         //Field Reset 
         currentlyDragging = null; 
-        availableMoves = new List<Vector2Int>();
+        availableMoves.Clear();
+        moveList.Clear();
 
         //Clean Up 
         for (int x = 0; x < TILE_COUNT_X; x++)
@@ -303,16 +315,23 @@ public class Chessboard : MonoBehaviour
 
         SpawnAllPieces();
         PositionAllPieces();
-        
+
         isWhiteTurn = true;
     }
-    public void OnExitButton()
+    public void OnExitButton() => Application.Quit(); 
+
+    //Special Moves
+    private void ProcessSpecialMove()
     {
-        Application.Quit();
+        //Test code
+        if (specialMove == SpecialMove.EnPassant)
+        {
+            //
+        }
     }
 
     //Operations 
-    private bool ContainsValidMove(ref List<Vector2Int> moves, Vector2 pos) 
+    private bool ContainsValidMove(ref List<Vector2Int> moves, Vector2Int pos) 
     {
         for (int i = 0; i < moves.Count; i++)
             if (moves[i].x == pos.x && moves[i].y == pos.y)
@@ -322,7 +341,7 @@ public class Chessboard : MonoBehaviour
     }
     private bool MoveTo(ChessPiece cp, int x, int y)
     {
-        if (!ContainsValidMove(ref availableMoves, new Vector2(x, y)))
+        if (!ContainsValidMove(ref availableMoves, new Vector2Int(x, y)))
             return false; 
 
         Vector2Int previousPosition = new Vector2Int(cp.currentX, cp.currentY);
@@ -375,6 +394,9 @@ public class Chessboard : MonoBehaviour
         PositionSinglePiece(x, y);
 
         isWhiteTurn = !isWhiteTurn; 
+        moveList.Add(new Vector2Int[] {previousPosition, new Vector2Int(x, y)});
+
+        ProcessSpecialMove(); 
 
         //For testing purposes all moves are valid.  
         return true; 
@@ -392,7 +414,7 @@ public class Chessboard : MonoBehaviour
 }
 
 /*
-NOTES:
+OLD NOTES:
 - Source -- https://youtu.be/FtGy7J8XD90?t=1906
   - Stopped at around 31:46.  His code is agnostic but it's harder to follow along without my own assets.  
 - Constants are capitalized to make them distinct.  

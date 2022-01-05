@@ -5,10 +5,13 @@ using UnityEngine;
 public class NOTES : MonoBehaviour {}
 /*
 TODO: 
-- Exact bookmark -- https://youtu.be/8Cp9UDl6nFM?t=994 
+- Exact bookmark -- https://youtu.be/2qua0_SO_M8?t=1262 
 - I dunno if the tutorial will go over Promoting
 - There is some sort of out of bounds error involving the pawns that I haven't run into yet, but makes sense and others say it exists.  
 - Are the Queen and King in the correct positions?  
+- BUG -- When white wins the end screen says "White team wins" and "Black team wins".  I think this only happens when the black team wins first.  
+  - I'll tackle this is Chessboard > OnResetButton.  I'll get the victory text and disable them both.  
+  - If that doesn't work I'll think of something else.  
 */
 
 /*
