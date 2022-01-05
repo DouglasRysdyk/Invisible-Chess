@@ -26,6 +26,11 @@ public class ChessPiece : MonoBehaviour
     private Vector3 desiredPosition;
     private Vector3 desiredScale = Vector3.one; //Scale down pieces on death 
 
+    private void Start()
+    {
+        transform.rotation = Quaternion.Euler((team == 0 ) ? Vector3.zero : new Vector3(0, 180, 0));
+    }
+
     private void Update()
     {
         //The 10 here at the end is arbitrary.  I can change it if I want.  Right now it's "quite fast." 

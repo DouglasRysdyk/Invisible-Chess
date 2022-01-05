@@ -12,6 +12,7 @@ public class Chessboard : MonoBehaviour
     [SerializeField] private float deathSize = 0.3f; 
     [SerializeField] private float deathSpacing = 0.3f; 
     [SerializeField] private float dragOffSet = 1.5f; 
+    [SerializeField] private GameObject victoryScreen;
     
     [Header("Prefabs && Materials")]
     [SerializeField] private GameObject[] prefabs; 
@@ -29,9 +30,12 @@ public class Chessboard : MonoBehaviour
     private Camera currentCamera; 
     private Vector2Int currentHover; 
     private Vector3 bounds; 
+    private bool isWhiteTurn;
 
     private void Awake()
     {
+        isWhiteTurn = true; 
+
         //Manually match to the art
         GenerateAllTiles(tileSize, TILE_COUNT_X, TILE_COUNT_Y);
 
@@ -75,7 +79,7 @@ public class Chessboard : MonoBehaviour
                 if (chessPieces[hitPosition.x, hitPosition.y] != null)
                 {
                     //Is it our turn? 
-                    if (true)
+                    if ((chessPieces[hitPosition.x, hitPosition.y].team == 0 && isWhiteTurn) || (chessPieces[hitPosition.x, hitPosition.y].team == 1 && !isWhiteTurn))
                     {
                         currentlyDragging = chessPieces[hitPosition.x, hitPosition.y];
 
@@ -255,6 +259,58 @@ public class Chessboard : MonoBehaviour
         availableMoves.Clear();
     }
 
+    //Checkmate 
+    private void CheckMate(int team)
+    {
+        DisplayVictory(team);
+    }
+    private void DisplayVictory(int winningTeam)
+    {
+        victoryScreen.SetActive(true);
+        victoryScreen.transform.GetChild(winningTeam).gameObject.SetActive(true);
+    }
+    public void OnResetButton()
+    {
+        //UI
+        victoryScreen.transform.GetChild(0).gameObject.SetActive(false); 
+        victoryScreen.transform.GetChild(0).gameObject.SetActive(false);
+        victoryScreen.SetActive(false);
+
+        //Field Reset 
+        currentlyDragging = null; 
+        availableMoves = new List<Vector2Int>();
+
+        //Clean Up 
+        for (int x = 0; x < TILE_COUNT_X; x++)
+        {
+            for (int y = 0; y < TILE_COUNT_Y; y++)
+            {
+                if (chessPieces[x, y] != null)
+                    Destroy(chessPieces[x, y].gameObject);
+
+                chessPieces[x, y] = null;
+            }
+        }
+
+        for (int i = 0; i < deadWhites.Count; i++)
+            Destroy(deadWhites[i].gameObject);
+
+        for (int i = 0; i < deadBlacks.Count; i++)
+            Destroy(deadBlacks[i].gameObject);
+
+        deadWhites.Clear(); 
+        deadBlacks.Clear(); 
+
+        SpawnAllPieces();
+        PositionAllPieces();
+        
+        isWhiteTurn = true;
+    }
+    public void OnExitButton()
+    {
+        Application.Quit();
+    }
+
     //Operations 
     private bool ContainsValidMove(ref List<Vector2Int> moves, Vector2 pos) 
     {
@@ -283,6 +339,10 @@ public class Chessboard : MonoBehaviour
             //If it's the enemy team
             if (ocp.team == 0)
             {
+                //Black team wins 
+                if (ocp.type == ChessPieceType.King)
+                    CheckMate(1);
+
                 deadWhites.Add(ocp);
                 ocp.SetScale(Vector3.one * deathSize);
                 ocp.SetPosition(
@@ -294,6 +354,10 @@ public class Chessboard : MonoBehaviour
             }
             else 
             {
+                //White team wins 
+                if (ocp.type == ChessPieceType.King)
+                    CheckMate(0);
+
                 deadBlacks.Add(ocp);
                 ocp.SetScale(Vector3.one * deathSize);
                 ocp.SetPosition(
@@ -309,6 +373,8 @@ public class Chessboard : MonoBehaviour
         chessPieces[previousPosition.x, previousPosition.y] = null;
 
         PositionSinglePiece(x, y);
+
+        isWhiteTurn = !isWhiteTurn; 
 
         //For testing purposes all moves are valid.  
         return true; 
