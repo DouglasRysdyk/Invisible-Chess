@@ -5,11 +5,12 @@ using UnityEngine;
 public class NOTES : MonoBehaviour {}
 /*
 TODO: 
-- Exact bookmark -- https://youtu.be/6_o7_fmk2os?t=1072
+- Exact bookmark -- https://youtu.be/lPoiTw0qjtc?t=1542 
 - BUG -- When white wins the end screen says "White team wins" and "Black team wins".  I think this only happens when the black team wins first.  
   - I'll tackle this is Chessboard > OnResetButton.  I'll get the victory text and disable them both.  
   - If that doesn't work I'll think of something else.  
 - BUG -- If you kill a piece and then en passant another the en passant'd piece appears in the wrong place in the graveyard.  
+- Make a branch or a fork where I reimplement the server script as a singleton?
 */
 
 /*
@@ -38,10 +39,6 @@ Notes:
     Vector2Int[] kingMove = moveList.Find(m => m[0].x == 4 && m[0].y == ourY);
     And
     board[3, ourY] == null && board[2, ourY] == null && board[1, ourY] == null)
-*/
-
-/*
-
 */
 
 
