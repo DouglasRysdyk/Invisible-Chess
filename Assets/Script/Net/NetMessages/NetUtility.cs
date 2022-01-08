@@ -22,8 +22,8 @@ public static class NetUtility
             case OpCode.KEEP_ALIVE: msg = new NetKeepAlive(stream); break;
             case OpCode.WELCOME: msg = new NetWelcome(stream); break; //Without this we would not know how to decode the operation code.  This calls NetWelcome which tells it how to read it.  
             case OpCode.START_GAME: msg = new NetStartGame(stream); break;
-            // case OpCode.MAKE_MOVE: msg = new NetMakeMove(stream); break;
-            // case OpCode.REMATCH: msg = new NetRematch(stream); break;
+            case OpCode.MAKE_MOVE: msg = new NetMakeMove(stream); break;
+            case OpCode.REMATCH: msg = new NetRematch(stream); break;
             default:
                 Debug.LogError("Message received had no OpCode."); //We don't know what's in the box so we throw it out.  This blows everything up.  
                 break;
